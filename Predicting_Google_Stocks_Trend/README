@@ -1,0 +1,6 @@
+This Project predicts the upward and downward trend in the Google Stock Price
+This model was trained based on the RNN - (LSTM).
+This LSTM consists of 4 layers, and applied to it dropout regularization.
+Pipeline: LSTM+Dropout -> LSTM + Dropout -> LSTM + Dropout -> LSTM + Dropout - > Dense
+Training was done on data from 2012-12/2016, we will predict january 2017 (upward or downward trend).
+These datasets are taken from UDEMY: "Deep Learning A-Z 2024: Neural Networks, AI & ChatGPT Prize" Course
