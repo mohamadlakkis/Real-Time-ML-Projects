@@ -1,0 +1,13 @@
+# Ignore all files in the latex folder
+latex/*
+# But not .pdf and .tex files
+!latex/*.pdf
+!latex/*.tex
+# Ignore all image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.svg
