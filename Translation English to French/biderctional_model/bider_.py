@@ -10,8 +10,9 @@ from torch.utils.data import DataLoader, Dataset
 from torch.nn.utils.rnn import pack_padded_sequence
 import random
 
-en = pd.read_csv('Datasets/en.csv')
-fr = pd.read_csv('Datasets/fr.csv')
+en = pd.read_csv(r'~/Desktop/dev/Real-Time-ML-Projects/Translation English to French/Datasets/en.csv')
+fr = pd.read_csv(r'~/Desktop/dev/Real-Time-ML-Projects/Translation English to French/Datasets/fr.csv')
+print("Hi")
 english_sentences = en.iloc[:, 0]
 french_sentences = fr.iloc[:, 0]
 en.columns = ['English']
@@ -255,7 +256,7 @@ class TranslationDataset(Dataset):
 
 max_src_len = 26  
 max_tgt_len = 26  
-batch_size = 256   # Batch size
+batch_size = 32   # Batch size
 
 # Initialize the dataset
 train_dataset = TranslationDataset(
@@ -299,12 +300,12 @@ num_epochs = 100
 encoder = Encoder(input_dim, embedding_dim, hidden_dim, num_layers)
 decoder = Decoder(output_dim, embedding_dim, hidden_dim, num_layers, teacher_forcing_ratio=teacher_forcing_ratio)
 model = Seq2Seq(encoder, decoder)
-
+model.load_state_dict(torch.load('seq2seq_model_9.pth',weights_only=True))
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.CrossEntropyLoss(ignore_index=french_vocab["<PAD>"])
-
+print("Training the model...")
 epoch_losses = []
-for epoch in range(num_epochs):
+for epoch in range(9,num_epochs):
     model.train()
     epoch_loss = 0
 

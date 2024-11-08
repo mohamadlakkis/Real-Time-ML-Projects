@@ -1,3 +1,0 @@
-Running on 5 layers 
-20 epochs 
-saving each model from 1 to 20 epochs 
