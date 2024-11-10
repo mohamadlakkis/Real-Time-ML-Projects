@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{float}
-
+\usepackage{hyperref}
 \title{Translation English to French}
 \author{Mohamad Lakkis}
 \date{\today}
@@ -13,6 +13,8 @@
 
 \maketitle
 
+\href{https://colab.research.google.com/drive/1v0oAvkeRjcL7hnDsjFzp0cvoUHiDxWXb#scrollTo=-SFZRSpWS6KQ}{LINK TO COLLAB}
+(for the models (files .pth) please reach out to me, as they are too big to be uploaded to the colab)\\
 \begin{abstract}
   This document explains the model used to translate English text to French text, presenting the model's results and discussing its limitations. This study provides insights for understanding sequence-based NLP tasks, particularly in the context of translation using recurrent neural networks.
 \end{abstract}
@@ -54,6 +56,52 @@ I think it is better now to look at the general hierachy of the model through th
     \includegraphics[width=0.9\textwidth]{Images/2.png}
     \caption{General Overview of the Model}
 \end{figure}
+\subsubsection{Encoder}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Images/encoder.png}
+    \caption{Encoder}
+    \label{fig:encoder}
+\end{figure}
+The architecture of the encoder is summarize in Figure \hyperref[fig:encoder]{\ref*{fig:encoder}}.
+The encoder is a unidirectional LSTM, its goal is encode the inputs, and make semantic meaning of the phrase, then it will pass this information to the decoder to generate the output.\\
+So in general sense, the encoder will take each input token id on its own (and in order), apply to it an embedding layer and then pass it to LSTM cell.\\ Then this LSTM cell will output the hidden state and the cell state, which will be passed to the same model but for the next token id. \\ So in other words it is the same model that we are working with but we are passing each input token one by one, and after each pass we get another hidden state and cell state, we pass them to the next "Encoder" to process the new token id with the last $h,c$.\\
+And after we finish all the input tokens, we will get the last hidden state and cell state, which will be passed to the decoder. \\
+\textbf{Importance of the Embedding Layer:}
+The embedding layer(for the english vocab) is important because it will convert the input token id to a dense vector, which will be passed to the LSTM cell. This dense vector will have a semantic meaning, and it will be learned during the training process.\\
+\underline{A Tricky Question:} How big should the embedding space be?\\
+Well the general sense answer should is, it should be big enough to capture the semantic meaning of the words, but not too big (like equal to the size of the vocab) because in this case it will lose its meaning(it will just be like a lookup table, not capturing anything about sematics and relations between words).\\
+\textbf{Setup:}
+\begin{itemize}
+    \item Embedding Layer: input\_dim = len(english\_vocab) = 203(in our case), output\_dim = 256 (The input dimension is the length of the vocabulary because each unique token in the input vocabulary needs its own representation in the embedding layer.)
+    \item LSTM Layer: Has itself 2 layers with 512 units(neurons) each.
+\end{itemize}
+\subsubsection{Decoder}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Images/decoder.png}
+    \caption{Decoder}
+    \label{fig:decoder}
+\end{figure}
+The architecture of the decoder is summarize in Figure \hyperref[fig:decoder]{\ref*{fig:decoder}}.
+The decoder is also a unidirectional LSTM, its goal is to generate the output sequence.\\ So similarly as before but here the decoder at each time step will take the last hidden state and cell state from the previous time step (initially they are the last hidden state and cell state from the encoder) and the output token id of the last time step (initially <SOS> token), and then it will pass them to the LSTM cell  at this time step.\\
+At each time step the LSTM cell will output the hidden state and cell state, and the output token id(which will the predicted word in french).\\Notice how we output the most probable word (id) in the french vocab, but in the training process we output the probablity over the whole french vocab.\\
+\textbf{Importance of the Embedding Layer:} Now the embedding layer in this case is for the french vocab, and it will convert the output token id to a dense vector, which will be passed to the LSTM cell. This dense vector will have a semantic meaning, and it will be learned during the training process(so in other word it will take the ouput from the last time step(which is in a form of an id) and convert it to a dense vector, which will be passed to the LSTM cell).\\
+\textbf{Setup:}
+\begin{itemize}
+    \item Embedding Layer: input\_dim = len(french\_vocab) = 348, output\_dim = 256 (The input dimension is the length of the vocabulary because each unique token in the output vocabulary needs its own representation in the embedding layer.)
+    \item LSTM Layer: Has itself 2 layers with 512 units(neurons) each.
+    \item Dense Layer: output\_dim = len(french\_vocab), activation = softmax (The dense layer is used to output the probability distribution over the french vocab, so the output will be a vector of size len(french\_vocab) with values between 0 and 1, and the sum of them will be 1).
+    \item Note: For inference we use the class with the highest probability, and for the loss computation we use the probablity distribution. 
+\end{itemize}
+
+\section{Training}
+The model training was conducted on an HPC cluster with the following resources:
+\begin{itemize}
+    \item Compute Nodes: 1 node
+    \item CPU Cores: 16 cores per node
+    \item Memory: 16 GB per node
+\end{itemize}  
 \section{Importance of training and ways to prevent overfitting}
 \begin{figure}[H]
     \centering
@@ -75,11 +123,8 @@ From these two figures we can see how the model learned to associate the word tr
 this example clearly illustrates the importance of incorporating an attention mechanism in a Seq2Seq model. Without attention, the model processes the sentence sequentially, which can lead it to focus only on certain parts, especially the beginning or end, while losing context in the middle or when shifts in meaning occur (e.g., handling both "I dislike bananas" and "she likes grapefruit").\\ 
 In this example, the model incorrectly translates "dislike" to "like" (in French, "je n'aime pas" would be used for "dislike" instead of "j'aime") and ignores the contrast between "I" and "she," leading to an incorrect translation.\\
 The attention mechanism allows the model to dynamically focus on relevant parts of the input sequence as it generates each word in the output sequence. This enables the model to capture the context and meaning of the entire sentence, leading to more accurate translations.\\
-The topic of attention will be explore in future work, as it is a crucial component for improving the model's performance.
+The topic of attention will be explored in future work, as it is a crucial component for improving the model's performance.
 \section{Conclusion}
-Your conclusion here.
-
-\bibliographystyle{plain}
-\bibliography{references}
+In this study, we presented a model for translating English text to French using LSTM networks. We explored the model's architecture, training process, and results, highlighting the importance of attention mechanisms for improving translation accuracy. We also discussed the limitations of the model and potential areas for future work, such as incorporating attention mechanisms and expanding the dataset. This study provides insights for understanding sequence-based NLP tasks, particularly in the context of translation using recurrent neural networks.\\
 
 \end{document}

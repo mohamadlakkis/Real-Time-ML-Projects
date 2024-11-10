@@ -1,0 +1,7 @@
+This Repo contains a small project on converting english sentences to french sentence using an encoder-decoder architecture; 
+We also explore the challenges that such models face, and the importance of the attention mechanism !!!
+This comparison is available in the "latex" folder. 
+To play around with the models, please pull this directory and run the "website.py" locally on your machine. 
+Keep in mind that in this model, I did NOT include attention mechanism; Here I only used LSTMs (encoder-decoder) architecture, alongside teacher forcing in the decoder; 
+For the explanation of the model, please checkout this unlisted youtube video: 
+[Explanation of the model](https://youtu.be/I_LDBGqHpfU?si=fm9CsyYSlVq4o76U)

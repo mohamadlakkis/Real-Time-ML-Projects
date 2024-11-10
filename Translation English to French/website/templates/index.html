@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual English to French Translators</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <style>
+        /* General Reset and Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .translation-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Dual English to French Translators</h1>
+
+    <!-- Form for Model 1 -->
+    <div class="container">
+        <h2>Translate with Model 1 (one directional model) </h2>
+        <form method="POST">
+            <label for="sentence1">Enter an English sentence:</label>
+            <input type="text" id="sentence1" name="sentence1" required placeholder="Type here...">
+            <button type="submit">Translate with Model 1</button>
+        </form>
+        
+        <!-- Display Model 1 translation -->
+        {% if original_sentence1 and translated_sentence1 %}
+        <div class="translation-card">
+            <h3>Original Sentence:</h3>
+            <p>{{ original_sentence1 }}</p>
+            <h3>Translated Sentence (Model 1):</h3>
+            <p>{{ translated_sentence1 }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Form for Model 2 -->
+    <div class="container">
+        <h2>Translate with Model 2 (bidirectional model)</h2>
+        <form method="POST">
+            <label for="sentence2">Enter an English sentence:</label>
+            <input type="text" id="sentence2" name="sentence2" required placeholder="Type here...">
+            <button type="submit">Translate with biderectional Model </button>
+        </form>
+        
+        <!-- Display Model 2 translation -->
+        {% if original_sentence2 and translated_sentence2 %}
+        <div class="translation-card">
+            <h3>Original Sentence:</h3>
+            <p>{{ original_sentence2 }}</p>
+            <h3>Translated Sentence (Model 2):</h3>
+            <p>{{ translated_sentence2 }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
